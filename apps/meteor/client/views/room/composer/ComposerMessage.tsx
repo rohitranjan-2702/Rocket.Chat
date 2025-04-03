@@ -65,6 +65,20 @@ const ComposerMessage = ({ tmid, onSend, ...props }: ComposerMessageProps): Reac
 					dispatchToastMessage({ type: 'error', message: error });
 				}
 			},
+			onSchedule: async ({ value: text, time }: { value: string; time: Date | string }): Promise<void> => {
+				try {
+					await chat?.action.stop('typing');
+					console.log('onSchdule', text);
+
+					const messageSchedule = await chat?.flows.scheduleMessage({
+						text,
+						time,
+					});
+					if (messageSchedule) onSend?.();
+				} catch (error) {
+					dispatchToastMessage({ type: 'error', message: error });
+				}
+			},
 			onTyping: async (): Promise<void> => {
 				if (chat?.composer?.text?.trim() === '') {
 					await chat?.action.stop('typing');

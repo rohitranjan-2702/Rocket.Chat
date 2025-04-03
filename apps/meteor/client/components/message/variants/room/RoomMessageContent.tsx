@@ -53,9 +53,7 @@ const RoomMessageContent = ({ message, unread, all, mention, searchText }: RoomM
 	return (
 		<>
 			{isMessageEncrypted && <MessageBody>{t('E2E_message_encrypted_placeholder')}</MessageBody>}
-
 			{!!quotes?.length && <Attachments attachments={quotes} />}
-
 			{!normalizedMessage.blocks?.length && !!normalizedMessage.md?.length && (
 				<>
 					{(!encrypted || normalizedMessage.e2e === 'done') && (
@@ -69,15 +67,11 @@ const RoomMessageContent = ({ message, unread, all, mention, searchText }: RoomM
 					)}
 				</>
 			)}
-
 			{!!attachments && <Attachments id={message.files?.[0]?._id} attachments={attachments} />}
-
 			{normalizedMessage.blocks && (
 				<UiKitMessageBlock rid={normalizedMessage.rid} mid={normalizedMessage._id} blocks={normalizedMessage.blocks} />
 			)}
-
 			{oembedEnabled && !!normalizedMessage.urls?.length && <UrlPreviews urls={normalizedMessage.urls} />}
-
 			{normalizedMessage.actionLinks?.length && (
 				<MessageActions
 					message={normalizedMessage}
@@ -88,9 +82,7 @@ const RoomMessageContent = ({ message, unread, all, mention, searchText }: RoomM
 					}))}
 				/>
 			)}
-
 			{normalizedMessage.reactions && Object.keys(normalizedMessage.reactions).length && <Reactions message={normalizedMessage} />}
-
 			{chat && isThreadMainMessage(normalizedMessage) && (
 				<ThreadMetrics
 					counter={normalizedMessage.tcount}
@@ -104,7 +96,6 @@ const RoomMessageContent = ({ message, unread, all, mention, searchText }: RoomM
 					participants={normalizedMessage?.replies}
 				/>
 			)}
-
 			{isDiscussionMessage(normalizedMessage) && (
 				<DiscussionMetrics
 					count={normalizedMessage.dcount}
@@ -113,13 +104,10 @@ const RoomMessageContent = ({ message, unread, all, mention, searchText }: RoomM
 					rid={normalizedMessage.rid}
 				/>
 			)}
-
 			{normalizedMessage.location && <Location location={normalizedMessage.location} />}
-
 			{broadcast && !!messageUser.username && normalizedMessage.u._id !== uid && (
 				<BroadcastMetrics username={messageUser.username} message={normalizedMessage} />
 			)}
-
 			{readReceiptEnabled && <ReadReceiptIndicator mid={normalizedMessage._id} unread={normalizedMessage.unread} />}
 		</>
 	);

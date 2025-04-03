@@ -20,6 +20,7 @@ import { sendMessage } from '../functions/sendMessage';
 import { RateLimiter } from '../lib';
 
 export async function executeSendMessage(uid: IUser['_id'], message: AtLeast<IMessage, 'rid'>, previewUrls?: string[]) {
+	console.log('executeSendMessage', new Date().toLocaleString());
 	if (message.tshow && !message.tmid) {
 		throw new Meteor.Error('invalid-params', 'tshow provided but missing tmid', {
 			method: 'sendMessage',

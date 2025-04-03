@@ -172,6 +172,40 @@ const MessageBox = ({
 		});
 	});
 
+	// just for demo purpose
+	const handleScheduleMessage = useEffectEvent(async () => {
+		const text = chat.composer?.text ?? '';
+		chat.composer?.clear();
+		popup.clear();
+
+		const scheduleMessage = await fetch('http://localhost:3000/api/v1/chat.scheduleMessage', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'x-user-id': 'xxxxxx',
+				'x-auth-token': 'xxxxx-yyyyyyy',
+			},
+			body: JSON.stringify({
+				message: {
+					msg: 'method',
+					id: '19',
+					method: 'scheduleMessage',
+					params: [
+						{
+							_id: `${Math.floor(Math.random() * 100000)}`,
+							rid: 'GENERAL',
+							msg: text,
+						},
+						null,
+					],
+				},
+				time: '5 seconds from now',
+			}),
+		});
+
+		console.log(scheduleMessage);
+	});
+
 	const closeEditing = (event: KeyboardEvent | MouseEvent<HTMLElement>) => {
 		if (chat.currentEditing) {
 			event.preventDefault();
@@ -440,6 +474,10 @@ const MessageBox = ({
 						{canSend && (
 							<>
 								{isEditing && <MessageComposerButton onClick={closeEditing}>{t('Cancel')}</MessageComposerButton>}
+								<button onClick={handleScheduleMessage} style={{ color: 'white', cursor: 'pointer' }}>
+									Schedule after 5 seconds
+								</button>
+
 								<MessageComposerAction
 									aria-label={t('Send')}
 									icon='send'

@@ -1,5 +1,5 @@
 import { Message } from '@rocket.chat/core-services';
-import type { IMessage, IThreadMainMessage } from '@rocket.chat/core-typings';
+import type { AtLeast, IMessage, IUser, IThreadMainMessage } from '@rocket.chat/core-typings';
 import { Messages, Users, Rooms, Subscriptions } from '@rocket.chat/models';
 import {
 	isChatReportMessageProps,
@@ -13,6 +13,7 @@ import {
 	isChatPostMessageProps,
 	isChatSearchProps,
 	isChatSendMessageProps,
+	isScheduleMessageProps,
 	isChatStarMessageProps,
 	isChatUnpinMessageProps,
 	isChatUnstarMessageProps,
@@ -51,6 +52,7 @@ import { pinMessage, unpinMessage } from '../../../message-pin/server/pinMessage
 import { starMessage } from '../../../message-star/server/starMessage';
 import { OEmbed } from '../../../oembed/server/server';
 import { executeSetReaction } from '../../../reactions/server/setReaction';
+import MessageScheduler from '../../../schedule-message/server';
 import { settings } from '../../../settings/server';
 import { followMessage } from '../../../threads/server/methods/followMessage';
 import { unfollowMessage } from '../../../threads/server/methods/unfollowMessage';
@@ -282,6 +284,37 @@ API.v1.addRoute(
 
 			return API.v1.success({
 				message,
+			});
+		},
+	},
+);
+
+API.v1.addRoute(
+	'chat.scheduleMessage',
+	{ authRequired: true, validateParams: isScheduleMessageProps },
+	{
+		async post() {
+			if (MessageTypes.isSystemMessage(this.bodyParams.message)) {
+				throw new Error("Cannot schedule system messages using 'chat.scheduleMessage'");
+			}
+
+			async function executeScheduleMessage(when: string | Date, message: AtLeast<IMessage, 'rid'>, uid: IUser['_id']) {
+				const scheduleOnce = await MessageScheduler.scheduleOnce({
+					when,
+					data: { uid, message },
+				});
+
+				console.log('executeScheduleMessage', new Date().toLocaleString());
+
+				return scheduleOnce;
+			}
+
+			const schedule = await applyAirGappedRestrictionsValidation(() =>
+				executeScheduleMessage(this.bodyParams.time, this.bodyParams.message as Pick<IMessage, 'rid'>, this.userId),
+			);
+
+			return API.v1.success({
+				schedule,
 			});
 		},
 	},

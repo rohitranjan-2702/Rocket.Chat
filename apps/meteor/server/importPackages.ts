@@ -84,3 +84,4 @@ import '../app/reactions/server';
 import '../app/livechat/server';
 import '../app/authentication/server';
 import '../app/voip/server/startup';
+import '../app/schedule-message/server';

@@ -154,6 +154,7 @@ export type ChatAPI = {
 			previewUrls?: string[];
 			isSlashCommandAllowed?: boolean;
 		}) => Promise<boolean>;
+		readonly scheduleMessage: ({ text, time }: { text: string; time: Date | string }) => Promise<boolean>;
 		readonly processSlashCommand: (message: IMessage, userId: string | null) => Promise<boolean>;
 		readonly processTooLongMessage: (message: IMessage) => Promise<boolean>;
 		readonly processMessageEditing: (

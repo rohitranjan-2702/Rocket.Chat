@@ -16,6 +16,11 @@ type ChatSendMessage = {
 	previewUrls?: string[];
 };
 
+type ChatScheduleMessage = {
+	message: Partial<IMessage>;
+	time: Date | string;
+};
+
 const chatSendMessageSchema = {
 	type: 'object',
 	properties: {
@@ -86,6 +91,73 @@ const chatSendMessageSchema = {
 };
 
 export const isChatSendMessageProps = ajv.compile<ChatSendMessage>(chatSendMessageSchema);
+
+const scheduleMessageSchema = {
+	type: 'object',
+	properties: {
+		message: {
+			type: 'object',
+			properties: {
+				_id: {
+					type: 'string',
+					nullable: true,
+				},
+				rid: {
+					type: 'string',
+				},
+				tmid: {
+					type: 'string',
+					nullable: true,
+				},
+				msg: {
+					type: 'string',
+					nullable: true,
+				},
+				alias: {
+					type: 'string',
+					nullable: true,
+				},
+				emoji: {
+					type: 'string',
+					nullable: true,
+				},
+				tshow: {
+					type: 'boolean',
+					nullable: true,
+				},
+				avatar: {
+					type: 'string',
+					nullable: true,
+				},
+				attachments: {
+					type: 'array',
+					items: {
+						type: 'object',
+					},
+					nullable: true,
+				},
+				blocks: {
+					type: 'array',
+					items: {
+						type: 'object',
+					},
+					nullable: true,
+				},
+				customFields: {
+					type: 'object',
+					nullable: true,
+				},
+			},
+		},
+		time: {
+			type: 'string',
+		},
+	},
+	required: ['message', 'time'],
+	additionalProperties: false,
+};
+
+export const isScheduleMessageProps = ajv.compile<ChatScheduleMessage>(scheduleMessageSchema);
 
 type ChatFollowMessage = {
 	mid: IMessage['_id'];
@@ -926,6 +998,11 @@ export const isChatOTRProps = ajv.compile<ChatOTR>(ChatOTRSchema);
 export type ChatEndpoints = {
 	'/v1/chat.sendMessage': {
 		POST: (params: ChatSendMessage) => {
+			message: IMessage;
+		};
+	};
+	'/v1/chat.scheduleMessage': {
+		POST: (params: ChatScheduleMessage) => {
 			message: IMessage;
 		};
 	};
